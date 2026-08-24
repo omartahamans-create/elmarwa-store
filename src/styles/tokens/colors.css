@@ -1,0 +1,37 @@
+:root{
+/* Gold ramp — sampled from the embossed logotype and the printed card */
+--gold-50:#FDF7E7;--gold-100:#F7E9C4;--gold-200:#EFD79A;--gold-300:#E3C271;--gold-400:#D4A437;
+--gold-500:#C08A22;--gold-600:#A16E18;--gold-700:#7E5411;--gold-800:#5A3B0C;--gold-900:#3A2607;
+/* Ink — the matte black of the signage board */
+--ink-900:#0E0D0C;--ink-800:#171513;--ink-700:#221F1B;--ink-600:#332E28;--ink-500:#4A443C;
+--ink-400:#6B645A;--ink-300:#938B7F;--ink-200:#BDB5A9;--ink-100:#DCD6CC;--ink-50:#F0ECE5;
+/* Marble / paper — the white ground of the letterhead and the crystal itself */
+--marble-000:#FFFFFF;--marble-050:#FAF8F5;--marble-100:#F3F0EB;--marble-200:#E7E2DA;--marble-300:#D5CEC3;
+/* Glass tint — the cool blue-green cast of sheet glass on edge */
+--glass-100:#E8F0EF;--glass-300:#AFC7C4;--glass-500:#6E8F8C;--glass-700:#3F5654;
+/* Semantic */
+--success:#4F7A4A;--warning:#C08A22;--danger:#9B3A2A;--info:#3F5654;
+--sale:#9B3A2A;--sale-bg:#FBECE8;--stock-low:#B4741A;
+--whatsapp:#25D366;
+
+/* Gold surfaces are never flat: the mark is always a gradient with a bright band */
+--gradient-gold:linear-gradient(160deg,#7E5411 0%,#D4A437 22%,#F7E9C4 42%,#D4A437 58%,#A16E18 78%,#E3C271 100%); /* @kind color */
+--gradient-gold-soft:linear-gradient(160deg,#C08A22 0%,#EFD79A 50%,#A16E18 100%); /* @kind color */
+--gradient-ink:linear-gradient(180deg,#171513 0%,#0E0D0C 100%); /* @kind color */
+--gradient-marble:linear-gradient(135deg,#FFFFFF 0%,#F3F0EB 45%,#E7E2DA 100%); /* @kind color */
+--gradient-protect-bottom:linear-gradient(180deg,rgba(14,13,12,0) 0%,rgba(14,13,12,.82) 100%); /* @kind color */
+
+/* Semantic aliases — prefer these in components */
+--surface-page:var(--marble-050);--surface-card:var(--marble-000);--surface-raised:var(--marble-100);
+--surface-inverse:var(--ink-900);--surface-inverse-raised:var(--ink-700);
+--text-body:var(--ink-700);--text-muted:var(--ink-400);--text-heading:var(--ink-900);
+--text-on-inverse:var(--marble-050);--text-muted-on-inverse:var(--ink-200);
+--text-accent:var(--gold-600);--text-accent-on-inverse:var(--gold-300);
+--border-hairline:var(--marble-300);--border-gold:var(--gold-400);--border-inverse:rgba(212,164,55,.35);
+--focus-ring:var(--gold-400);
+}
+[data-theme="inverse"]{
+--surface-page:var(--ink-900);--surface-card:var(--ink-800);--surface-raised:var(--ink-700);
+--text-body:var(--marble-100);--text-muted:var(--ink-300);--text-heading:var(--marble-000);
+--text-accent:var(--gold-300);--border-hairline:rgba(212,164,55,.28);
+}

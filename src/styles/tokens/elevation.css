@@ -1,0 +1,12 @@
+:root{
+/* Shadows are soft and warm-neutral — the brand photographs on marble, not on grey UI */
+--shadow-xs:0 1px 2px rgba(58,38,7,.08);
+--shadow-sm:0 2px 6px rgba(58,38,7,.10);
+--shadow-md:0 8px 24px rgba(58,38,7,.12);
+--shadow-lg:0 18px 48px rgba(58,38,7,.16);
+--shadow-gold-glow:0 0 0 1px rgba(212,164,55,.35),0 8px 28px rgba(192,138,34,.22);
+/* Emboss — how the logotype sits on its ground */
+--inset-emboss:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(58,38,7,.25); /* @kind shadow */
+--inset-engrave:inset 0 1px 2px rgba(14,13,12,.45); /* @kind shadow */
+--hairline-gold:0 0 0 1px rgba(212,164,55,.45); /* @kind shadow */
+}

@@ -1,0 +1,41 @@
+:root{
+--font-display:"Cinzel","Times New Roman",serif;
+--font-display-ar:"Cairo","Tajawal",sans-serif;
+--font-ornate-ar:"Amiri",serif;
+--font-sans:"Jost","Helvetica Neue",Arial,sans-serif;
+--font-sans-ar:"Tajawal","Cairo","Segoe UI",sans-serif;
+--font-mono:ui-monospace,"SF Mono",Menlo,monospace;
+
+/* Display — logotype-adjacent, always uppercase, always letterspaced */
+--text-display-1:clamp(44px,6vw,84px);
+--lh-display-1:1.02; /* @kind font */
+--ls-display-1:.06em; /* @kind font */
+--text-display-2:clamp(32px,4vw,56px);
+--lh-display-2:1.08; /* @kind font */
+--ls-display-2:.07em; /* @kind font */
+--text-title:32px;
+--lh-title:1.18; /* @kind font */
+--ls-title:.04em; /* @kind font */
+--text-heading:24px;
+--lh-heading:1.25; /* @kind font */
+--ls-heading:.03em; /* @kind font */
+--text-subhead:18px;
+--lh-subhead:1.35; /* @kind font */
+--ls-subhead:.14em; /* @kind font */
+--text-body-lg:18px;
+--lh-body-lg:1.7; /* @kind font */
+--text-body:16px;
+--lh-body:1.65; /* @kind font */
+--text-small:14px;
+--lh-small:1.55; /* @kind font */
+--text-caption:12px;
+--lh-caption:1.4; /* @kind font */
+--ls-caption:.16em; /* @kind font */
+
+--weight-light:300; /* @kind font */
+--weight-regular:400; /* @kind font */
+--weight-medium:500; /* @kind font */
+--weight-semibold:600; /* @kind font */
+--weight-bold:700; /* @kind font */
+--weight-black:900; /* @kind font */
+}
