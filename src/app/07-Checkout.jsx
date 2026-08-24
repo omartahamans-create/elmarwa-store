@@ -6,6 +6,7 @@ function __deps_ui_kits_store_Checkout_jsx() {
 }
 
 function Checkout({ items, subtotal, onNavigate }) {
+  const isMobile = window.__RESP__.useMobile();
   const { Button, Input, Select, Textarea, Icon, Price, FreeShipMeter, GOVERNORATES, SHIPPING_THRESHOLD, PRODUCTS } = __deps_ui_kits_store_Checkout_jsx();
   const [pay, setPay] = React.useState('cod');
   const [done, setDone] = React.useState(false);
@@ -29,13 +30,13 @@ function Checkout({ items, subtotal, onNavigate }) {
 
   return (
     <main dir="rtl" style={{ background: 'var(--surface-page)' }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '32px 24px' }}>
-        <h1 style={{ margin: '0 0 8px', fontFamily: 'var(--font-sans-ar)', fontSize: 28, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>إتمام الطلب</h1>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: isMobile ? '18px 12px' : '32px 24px' }}>
+        <h1 style={{ margin: '0 0 8px', fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 22 : 28, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>إتمام الطلب</h1>
         <p style={{ margin: '0 0 24px', fontFamily: 'var(--font-sans-ar)', fontSize: 15, color: 'var(--text-muted)' }}>خطوة واحدة بس — من غير حساب ولا تسجيل.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 28, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: isMobile ? 20 : 28, alignItems: 'start' }}>
           <form onSubmit={e => { e.preventDefault(); setDone(true); }} style={{ background: 'var(--marble-000)', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-md)', padding: 24, display: 'flex', flexDirection: 'column', gap: 18 }}>
             <h3 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 17, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>بيانات التوصيل</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
               <input required placeholder="الاسم بالكامل" style={field} />
               <input required placeholder="رقم الموبايل" style={field} />
               <select style={field}>{GOVERNORATES.map(g => <option key={g}>{g}</option>)}</select>

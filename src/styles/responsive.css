@@ -1,0 +1,38 @@
+/* قواعد عامة للاستجابة — تكمّل التبديل الشرطي داخل المكوّنات */
+
+html, body { max-width: 100%; }
+
+/* الحقول لها عرض افتراضي (~20 حرف) بيوسّع الحاويات — نلغيه */
+#root input,
+#root select,
+#root textarea { min-width: 0; }
+
+/* عناصر الشبكة والفليكس تقدر تضغط بدل ما تفرد الصفحة */
+#root main > div > div > *,
+#root aside { min-width: 0; }
+
+/* الصور والأيقونات لا تتعدى حاويتها أبداً */
+#root img,
+#root svg,
+#root video { max-width: 100%; }
+
+/* أهداف لمس مريحة على الموبايل */
+@media (max-width: 767px) {
+  #root button,
+  #root a[role="button"] { touch-action: manipulation; }
+
+  /* منع تكبير الحقول تلقائياً في iOS: أي حقل أقل من 16px بيسبب zoom */
+  #root input,
+  #root select,
+  #root textarea { font-size: 16px !important; }
+}
+
+/* صفوف تُسحب أفقياً بسلاسة على اللمس */
+.mobile-scroll-row {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.mobile-scroll-row::-webkit-scrollbar { display: none; }
+.mobile-scroll-row > * { scroll-snap-align: start; }

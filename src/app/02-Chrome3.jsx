@@ -22,32 +22,156 @@ function PromoBar() {
   );
 }
 
+function MobileDrawer({ open, onClose, onNavigate }) {
+  const { Icon, CATEGORIES } = __deps_chrome();
+  const { useLockScroll } = window.__RESP__;
+  const [openCat, setOpenCat] = React.useState(null);
+  useLockScroll(open);
+  if (!open) return null;
+  const go = (route, params) => { onClose(); onNavigate(route, params); };
+  const PAGES = [
+    ['العروض والخصومات', 'flash'],
+    ['من نحن', 'about'],
+    ['تواصل معنا', 'contact'],
+    ['الأسئلة الشائعة', 'faq'],
+    ['سياسة الشحن والاسترجاع', 'policy']
+  ];
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 95, background: 'rgba(58,38,7,.34)' }}>
+      <aside dir="rtl" onClick={e => e.stopPropagation()} style={{
+        position: 'absolute', insetInlineStart: 0, top: 0, bottom: 0, width: 320, maxWidth: '86vw',
+        background: 'var(--marble-000)', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-lg)'
+      }}>
+        <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-hairline)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+          <img src="/assets/logo-elmarwa.svg" alt="المروة للزجاج" onClick={() => go('home')} style={{ height: 46, cursor: 'pointer', mixBlendMode: 'multiply' }} />
+          <button onClick={onClose} aria-label="إغلاق القائمة" style={{ background: 'none', border: 'none', fontSize: 30, lineHeight: 1, cursor: 'pointer', color: 'var(--text-muted)', padding: '4px 8px' }}>×</button>
+        </div>
+
+        <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          {CATEGORIES.map(c => {
+            const isOpen = openCat === c.id;
+            return (
+              <div key={c.id} style={{ borderBottom: '1px solid var(--border-hairline)' }}>
+                <div style={{ display: 'flex', alignItems: 'stretch' }}>
+                  <button onClick={() => go('listing', { cat: c.id })} style={{
+                    flex: 1, textAlign: 'start', background: 'none', border: 'none', cursor: 'pointer',
+                    padding: '15px 16px', fontFamily: 'var(--font-sans-ar)', fontSize: 16,
+                    fontWeight: 'var(--weight-medium)', color: 'var(--text-body)'
+                  }}>{c.title}</button>
+                  <button onClick={() => setOpenCat(isOpen ? null : c.id)} aria-label="عرض الأقسام الفرعية" style={{
+                    background: 'none', border: 'none', cursor: 'pointer', padding: '0 16px',
+                    color: 'var(--gold-600)', fontSize: 18, transform: isOpen ? 'rotate(180deg)' : 'none',
+                    transition: 'transform .18s ease'
+                  }}>⌄</button>
+                </div>
+                {isOpen && (
+                  <div style={{ padding: '2px 16px 12px', display: 'flex', flexDirection: 'column', background: 'var(--marble-050)' }}>
+                    {c.children.map(sub => (
+                      <a key={sub} onClick={() => go('listing', { cat: c.id, sub })} style={{
+                        cursor: 'pointer', border: 'none', padding: '10px 8px',
+                        fontFamily: 'var(--font-sans-ar)', fontSize: 15, color: 'var(--text-muted)'
+                      }}>{sub}</a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {PAGES.map(([label, route]) => (
+            <button key={route} onClick={() => go(route)} style={{
+              display: 'block', width: '100%', textAlign: 'start', background: 'none', border: 'none',
+              borderBottom: '1px solid var(--border-hairline)', cursor: 'pointer', padding: '15px 16px',
+              fontFamily: 'var(--font-sans-ar)', fontSize: 16,
+              color: route === 'flash' ? 'var(--sale)' : 'var(--text-body)',
+              fontWeight: route === 'flash' ? 800 : 'var(--weight-regular)'
+            }}>{label}</button>
+          ))}
+        </div>
+
+        <div style={{ padding: 16, borderTop: '1px solid var(--border-hairline)', background: 'var(--marble-050)', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <a href="tel:01007022631" style={{ display: 'flex', alignItems: 'center', gap: 10, border: 'none', color: 'var(--text-body)', fontFamily: 'var(--font-sans-ar)', fontSize: 15 }}>
+            <Icon name="phone" size={18} color="var(--gold-600)" />
+            <b style={{ fontWeight: 800, direction: 'ltr', fontVariantNumeric: 'tabular-nums' }}>010 070 226 313</b>
+          </a>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <a href="https://www.facebook.com/profile.php?id=61554717004094" style={{ border: 'none' }}><Icon name="facebook" size={22} color="var(--gold-600)" /></a>
+            <a href="https://www.instagram.com/elmarwa_glass_/" style={{ border: 'none' }}><Icon name="instagram" size={22} color="var(--gold-600)" /></a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
 function Header({ route, onNavigate, cartCount, onOpenCart, query, onQuery }) {
-  const { Icon, Button, CATEGORIES } = __deps_chrome();
+  const { Icon, CATEGORIES } = __deps_chrome();
+  // القائمة الجانبية بتشتغل على الموبايل والتابلت — قائمة الأقسام الأفقية بتزحم تحت 1024
+  const isMobile = window.__RESP__.useNarrow();
   const [menu, setMenu] = React.useState(null);
+  const [drawer, setDrawer] = React.useState(false);
+  const [searchOpen, setSearchOpen] = React.useState(false);
+
+  React.useEffect(() => { setDrawer(false); setSearchOpen(false); }, [route]);
+
+  const CartButton = (
+    <button onClick={onOpenCart} aria-label="السلة" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: 6 }}>
+      <Icon name="shopping-bag" size={isMobile ? 24 : 26} color="var(--gold-600)" />
+      {cartCount > 0 && <span style={{ position: 'absolute', top: -2, insetInlineStart: -4, minWidth: 20, height: 20, borderRadius: 999, background: 'var(--sale)', color: '#fff', fontSize: 12, fontWeight: 800, display: 'grid', placeItems: 'center', fontFamily: 'var(--font-sans)' }}>{cartCount}</span>}
+    </button>
+  );
+
+  const SearchField = (
+    <form onSubmit={e => { e.preventDefault(); setSearchOpen(false); onNavigate('search'); }} style={{ flex: 1, maxWidth: isMobile ? 'none' : 560, position: 'relative' }}>
+      <input value={query} onChange={e => onQuery(e.target.value)} placeholder="ابحث عن طقم، كريستال، حلة…" style={{
+        width: '100%', height: 48, borderRadius: 'var(--radius-sm)', border: '1px solid var(--gold-300)',
+        background: 'var(--marble-050)', color: 'var(--text-body)', padding: '0 46px 0 14px',
+        fontFamily: 'var(--font-sans-ar)', fontSize: 15, outline: 'none'
+      }} />
+      <span style={{ position: 'absolute', insetInlineStart: 14, top: 14 }}><Icon name="search" size={20} color="var(--gold-600)" /></span>
+    </form>
+  );
+
+  if (isMobile) {
+    return (
+      <header dir="rtl" style={{ position: 'sticky', top: 0, zIndex: drawer ? 100 : 40 }}>
+        <PromoBar />
+        <div style={{ background: 'var(--marble-000)', borderBottom: '1px solid var(--border-hairline)' }}>
+          <div style={{ padding: '0 12px', height: 62, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <button onClick={() => setDrawer(true)} aria-label="القائمة" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, display: 'grid', gap: 5 }}>
+              {[0, 1, 2].map(i => <span key={i} style={{ display: 'block', width: 22, height: 2, background: 'var(--gold-700)', borderRadius: 2 }} />)}
+            </button>
+            <img src="/assets/logo-elmarwa.svg" alt="المروة للزجاج" onClick={() => onNavigate('home')} style={{ height: 44, cursor: 'pointer', marginInlineEnd: 'auto', mixBlendMode: 'multiply' }} />
+            <button onClick={() => setSearchOpen(v => !v)} aria-label="بحث" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8 }}>
+              <Icon name="search" size={22} color="var(--gold-600)" />
+            </button>
+            <a href="tel:01007022631" aria-label="اتصل بنا" style={{ border: 'none', padding: 8, display: 'grid', placeItems: 'center' }}>
+              <Icon name="phone" size={21} color="var(--gold-600)" />
+            </a>
+            {CartButton}
+          </div>
+          {searchOpen && (
+            <div style={{ padding: '0 12px 12px', display: 'flex' }}>{SearchField}</div>
+          )}
+        </div>
+        <MobileDrawer open={drawer} onClose={() => setDrawer(false)} onNavigate={onNavigate} />
+      </header>
+    );
+  }
+
   return (
     <header dir="rtl" style={{ position: 'sticky', top: 0, zIndex: 40 }}>
       <PromoBar />
       <div style={{ background: 'var(--marble-000)', borderBottom: '1px solid var(--border-hairline)' }}>
         <div style={{ maxWidth: 1320, margin: '0 auto', padding: '0 24px', height: 92, display: 'flex', alignItems: 'center', gap: 24 }}>
           <img src="/assets/logo-elmarwa.svg" alt="المروة للزجاج" onClick={() => onNavigate('home')} style={{ height: 76, cursor: 'pointer' }} />
-          <form onSubmit={e => { e.preventDefault(); onNavigate('search'); }} style={{ flex: 1, maxWidth: 560, position: 'relative' }}>
-            <input value={query} onChange={e => onQuery(e.target.value)} placeholder="ابحث عن طقم، كريستال، حلة…" style={{
-              width: '100%', height: 48, borderRadius: 'var(--radius-sm)', border: '1px solid var(--gold-300)',
-              background: 'var(--marble-050)', color: 'var(--text-body)', padding: '0 46px 0 14px',
-              fontFamily: 'var(--font-sans-ar)', fontSize: 15, outline: 'none'
-            }} />
-            <span style={{ position: 'absolute', insetInlineStart: 14, top: 14 }}><Icon name="search" size={20} color="var(--gold-600)" /></span>
-          </form>
+          {SearchField}
           <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginInlineStart: 'auto' }}>
             <a href="tel:01007022631" style={{ display: 'flex', alignItems: 'center', gap: 8, border: 'none', color: 'var(--text-body)', fontFamily: 'var(--font-sans-ar)', fontSize: 15 }}>
               <Icon name="phone" size={18} color="var(--gold-600)" />
               <b style={{ fontWeight: 800, direction: 'ltr', fontVariantNumeric: 'tabular-nums' }}>010 070 226 313</b>
             </a>
-            <button onClick={onOpenCart} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: 6 }}>
-              <Icon name="shopping-bag" size={26} color="var(--gold-600)" />
-              {cartCount > 0 && <span style={{ position: 'absolute', top: -2, insetInlineStart: -4, minWidth: 20, height: 20, borderRadius: 999, background: 'var(--sale)', color: '#fff', fontSize: 12, fontWeight: 800, display: 'grid', placeItems: 'center', fontFamily: 'var(--font-sans)' }}>{cartCount}</span>}
-            </button>
+            {CartButton}
           </div>
         </div>
       </div>
@@ -86,11 +210,13 @@ function Header({ route, onNavigate, cartCount, onOpenCart, query, onQuery }) {
 
 function MiniCart({ open, onClose, items, onQty, subtotal, onNavigate }) {
   const { Button, FreeShipMeter, Price, QuantityStepper, SHIPPING_THRESHOLD } = __deps_chrome();
+  const isMobile = window.__RESP__.useMobile();
+  window.__RESP__.useLockScroll(open);
   if (!open) return null;
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(58,38,7,.28)' }}>
       <aside dir="rtl" onClick={e => e.stopPropagation()} style={{
-        position: 'absolute', insetInlineStart: 0, top: 0, bottom: 0, width: 400, maxWidth: '92vw',
+        position: 'absolute', insetInlineStart: 0, top: 0, bottom: 0, width: isMobile ? '100%' : 400, maxWidth: isMobile ? '100%' : '92vw',
         background: 'var(--marble-000)', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-lg)'
       }}>
         <div style={{ padding: 20, borderBottom: '1px solid var(--border-hairline)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -127,18 +253,19 @@ function MiniCart({ open, onClose, items, onQty, subtotal, onNavigate }) {
 
 function Footer({ onNavigate }) {
   const { Icon, TrustRow } = __deps_chrome();
+  const isMobile = window.__RESP__.useMobile();
   const cols = [
     ['تسوق', ['أطقم السفرة', 'الزجاج والكريستال', 'أدوات المطبخ', 'حافظات الطعام', 'أطقم الهدايا']],
     ['المتجر', ['من نحن', 'تواصل معنا', 'الأسئلة الشائعة', 'سياسة الشحن والاسترجاع']]
   ];
   return (
-    <footer dir="rtl" style={{ background: 'var(--marble-100)', color: 'var(--text-body)', marginTop: 64, borderTop: '1px solid var(--border-hairline)' }}>
-      <div style={{ borderBottom: '1px solid var(--marble-300)', padding: '28px 24px', background: 'var(--marble-050)' }}>
+    <footer dir="rtl" style={{ background: 'var(--marble-100)', color: 'var(--text-body)', marginTop: isMobile ? 40 : 64, paddingBottom: isMobile ? 120 : 0, borderTop: '1px solid var(--border-hairline)' }}>
+      <div style={{ borderBottom: '1px solid var(--marble-300)', padding: isMobile ? '20px 16px' : '28px 24px', background: 'var(--marble-050)' }}>
         <div style={{ maxWidth: 1320, margin: '0 auto' }}><TrustRow /></div>
       </div>
-      <div style={{ maxWidth: 1320, margin: '0 auto', padding: '48px 24px', display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1.2fr', gap: 40 }}>
+      <div style={{ maxWidth: 1320, margin: '0 auto', padding: isMobile ? '32px 16px' : '48px 24px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr 1fr 1.2fr', gap: isMobile ? 28 : 40 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <img src="/assets/logo-elmarwa.svg" alt="" style={{ height: 112, alignSelf: 'flex-start' }} />
+          <img src="/assets/logo-elmarwa.svg" alt="" style={{ height: isMobile ? 84 : 112, alignSelf: isMobile ? 'center' : 'flex-start' }} />
           <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 14, lineHeight: 1.9, color: 'var(--text-muted)' }}>مصنع ومعرض المروة لزخرفة الزجاج والكريستال. جملة وقطاعي واستيراد أدوات منزلية.</p>
           <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: 14, color: 'var(--gold-700)' }}>جراح — أجا — الدقهلية</span>
         </div>

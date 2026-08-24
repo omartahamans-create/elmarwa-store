@@ -8,13 +8,14 @@ function __deps_ui_kits_store_Cro_jsx() {
 /* Welcome offer — fires 15s after landing, once per session. */
 function WelcomeOffer({ open, onClose }) {
   const { Button, Icon, Modal, Countdown, Price, ProductTile, FreeShipMeter, PRODUCTS, SHIPPING_THRESHOLD } = __deps_ui_kits_store_Cro_jsx();
+  const isMobile = window.__RESP__.useMobile();
   const [phone, setPhone] = React.useState('');
   const [done, setDone] = React.useState(false);
   return (
     <Modal open={open} onClose={onClose} width={720}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-        <img src="/assets/products/promo-laroos-crystal-gift.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', minHeight: 300 }} />
-        <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
+        <img src="/assets/products/promo-laroos-crystal-gift.jpg" alt="" style={{ width: '100%', height: isMobile ? 150 : '100%', objectFit: 'cover', minHeight: isMobile ? 0 : 300 }} />
+        <div style={{ padding: isMobile ? 20 : 32, display: 'flex', flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
           {done ? (
             <>
               <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 24, fontWeight: 900, textTransform: 'none', letterSpacing: 'normal' }}>كودك جاهز</h2>
@@ -25,7 +26,7 @@ function WelcomeOffer({ open, onClose }) {
           ) : (
             <>
               <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: 14, fontWeight: 700, color: 'var(--gold-600)' }}>عرض أول طلب</span>
-              <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 28, fontWeight: 900, lineHeight: 1.35, textTransform: 'none', letterSpacing: 'normal' }}>خصم 10٪ على<br />أول طلب ليك</h2>
+              <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 22 : 28, fontWeight: 900, lineHeight: 1.35, textTransform: 'none', letterSpacing: 'normal' }}>خصم 10٪ على<br />أول طلب ليك</h2>
               <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 15, lineHeight: 1.8, color: 'var(--text-muted)' }}>سيب رقمك ونبعتلك الكود، وكمان أول ما ينزل عرض جديد.</p>
               <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="01000000000" style={{ padding: '13px 14px', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font-sans-ar)', fontSize: 16, outline: 'none' }} />
               <Button variant="primary" size="lg" fullWidth onClick={() => setDone(true)}>هاتلي الكود</Button>
@@ -41,11 +42,12 @@ function WelcomeOffer({ open, onClose }) {
 /* Cross-sell sheet — fires on add-to-cart. */
 function AddedSheet({ open, onClose, product, subtotal, onAdd, onNavigate }) {
   const { Button, Icon, Modal, Countdown, Price, ProductTile, FreeShipMeter, PRODUCTS, SHIPPING_THRESHOLD } = __deps_ui_kits_store_Cro_jsx();
+  const isMobile = window.__RESP__.useMobile();
   if (!product) return null;
   const suggestions = PRODUCTS.filter(p => p.id !== product.id).slice(0, 3);
   return (
     <Modal open={open} onClose={onClose} width={560}>
-      <div style={{ padding: 26, display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <div style={{ padding: isMobile ? 18 : 26, display: 'flex', flexDirection: 'column', gap: isMobile ? 14 : 18 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <span style={{ width: 34, height: 34, borderRadius: 999, background: 'var(--gold-50)', display: 'grid', placeItems: 'center' }}><Icon name="check" size={19} color="var(--gold-600)" /></span>
           <h3 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 18, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>اتضاف للسلة</h3>
@@ -58,7 +60,7 @@ function AddedSheet({ open, onClose, product, subtotal, onAdd, onNavigate }) {
         <FreeShipMeter subtotal={subtotal} threshold={SHIPPING_THRESHOLD} />
         <div>
           <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: 15, fontWeight: 700, display: 'block', marginBottom: 10 }}>ضيفهم وكمّل الشحن المجاني</span>
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', gap: isMobile ? 8 : 10 }}>
             {suggestions.map(s => (
               <div key={s.id} style={{ flex: 1, border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-sm)', padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <img src={s.image} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 4 }} />
@@ -68,7 +70,7 @@ function AddedSheet({ open, onClose, product, subtotal, onAdd, onNavigate }) {
             ))}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: 10, flexDirection: isMobile ? 'column' : 'row' }}>
           <Button variant="outline" style={{ flex: 1 }} onClick={onClose}>كمّل تسوق</Button>
           <Button variant="primary" style={{ flex: 1 }} onClick={() => { onClose(); onNavigate('cart'); }}>روح للسلة</Button>
         </div>
@@ -80,10 +82,11 @@ function AddedSheet({ open, onClose, product, subtotal, onAdd, onNavigate }) {
 /* Exit intent — fires once when the pointer leaves the top of the viewport. */
 function ExitOffer({ open, onClose, onNavigate }) {
   const { Button, Icon, Modal, Countdown, Price, ProductTile, FreeShipMeter, PRODUCTS, SHIPPING_THRESHOLD } = __deps_ui_kits_store_Cro_jsx();
+  const isMobile = window.__RESP__.useMobile();
   return (
     <Modal open={open} onClose={onClose} width={480}>
-      <div style={{ padding: 32, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
-        <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 26, fontWeight: 900, lineHeight: 1.4, textTransform: 'none', letterSpacing: 'normal' }}>استنى — الشحن<br />عليك مجاني النهارده</h2>
+      <div style={{ padding: isMobile ? 22 : 32, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
+        <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 21 : 26, fontWeight: 900, lineHeight: 1.4, textTransform: 'none', letterSpacing: 'normal' }}>استنى — الشحن<br />عليك مجاني النهارده</h2>
         <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 15, lineHeight: 1.85, color: 'var(--text-muted)' }}>على أي طلب فوق 2000 جنيه بدل 3000، لحد نهاية اليوم.</p>
         <Countdown seconds={2 * 3600 + 15 * 60} label="ينتهي خلال" />
         <Button variant="primary" size="lg" fullWidth onClick={() => { onClose(); onNavigate('flash'); }}>شوف العروض</Button>
@@ -96,7 +99,21 @@ function ExitOffer({ open, onClose, onNavigate }) {
 /* Sticky bottom bar — mobile-first CRO, always one tap from the cart. */
 function StickyBar({ subtotal, count, onNavigate }) {
   const { Button, Icon, Modal, Countdown, Price, ProductTile, FreeShipMeter, PRODUCTS, SHIPPING_THRESHOLD } = __deps_ui_kits_store_Cro_jsx();
+  const isMobile = window.__RESP__.useMobile();
   if (!count) return null;
+  if (isMobile) {
+    return (
+      <div dir="rtl" style={{
+        position: 'fixed', insetInline: 0, bottom: 0, zIndex: 60, background: 'var(--marble-000)',
+        borderTop: '2px solid var(--gold-400)', boxShadow: '0 -6px 20px rgba(58,38,7,.10)',
+        padding: '10px 12px calc(10px + env(safe-area-inset-bottom))',
+        display: 'flex', flexDirection: 'column', gap: 8
+      }}>
+        <FreeShipMeter subtotal={subtotal} threshold={SHIPPING_THRESHOLD} style={{ color: 'var(--text-body)' }} />
+        <Button variant="primary" size="md" fullWidth onClick={() => onNavigate('checkout')}>إتمام الطلب — {subtotal.toLocaleString('en-US')} جنيه</Button>
+      </div>
+    );
+  }
   return (
     <div dir="rtl" style={{
       position: 'fixed', insetInline: 0, bottom: 0, zIndex: 60, background: 'var(--marble-000)',
@@ -118,6 +135,7 @@ function ProofToast() {
     ['سارة من القاهرة', 'طقم أواني طهي سيراميك'],
     ['محمود من دمياط', 'طقم حافظات طعام EasyBox']
   ];
+  const isMobile = window.__RESP__.useMobile();
   const [i, setI] = React.useState(-1);
   React.useEffect(() => {
     let n = 0;
@@ -126,7 +144,7 @@ function ProofToast() {
     const t = setInterval(show, 16000);
     return () => { clearTimeout(t0); clearInterval(t); };
   }, []);
-  if (i < 0) return null;
+  if (i < 0 || isMobile) return null;
   const [who, what] = events[i];
   return (
     <div dir="rtl" style={{
@@ -147,9 +165,11 @@ function ProofToast() {
 /* Floating WhatsApp — the store's real support channel. */
 function WhatsAppFab() {
   const { Button, Icon, Modal, Countdown, Price, ProductTile, FreeShipMeter, PRODUCTS, SHIPPING_THRESHOLD } = __deps_ui_kits_store_Cro_jsx();
+  const isMobile = window.__RESP__.useMobile();
   return (
     <a href="https://wa.me/201007022631" style={{
-      position: 'fixed', bottom: 96, insetInlineStart: 24, zIndex: 55, width: 54, height: 54,
+      position: 'fixed', bottom: isMobile ? 'calc(16px + env(safe-area-inset-bottom))' : 96,
+      insetInlineStart: isMobile ? 14 : 24, zIndex: 55, width: isMobile ? 50 : 54, height: isMobile ? 50 : 54,
       borderRadius: 999, background: 'var(--whatsapp)', display: 'grid', placeItems: 'center',
       boxShadow: 'var(--shadow-md)', border: 'none'
     }} aria-label="واتساب"><Icon name="message-circle" size={26} color="#0E0D0C" /></a>

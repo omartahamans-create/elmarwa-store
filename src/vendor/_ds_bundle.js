@@ -1369,7 +1369,7 @@ function TrustRow({
     dir: "rtl",
     style: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(' + items.length + ',1fr)',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 170px), 1fr))',
       gap: 'var(--space-4)',
       ...style
     }

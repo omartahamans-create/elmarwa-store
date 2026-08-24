@@ -7,6 +7,7 @@ function __deps_ui_kits_store_Product_jsx() {
 
 function Product({ product, onNavigate, onAdd, onOpen }) {
   const { Button, Icon, Badge, Price, Rating, QuantityStepper, Breadcrumb, Accordion, ProductTile, TrustRow, PRODUCTS, SHIPPING_THRESHOLD } = __deps_ui_kits_store_Product_jsx();
+  const isMobile = window.__RESP__.useMobile();
   const p = product || PRODUCTS[4];
   const [qty, setQty] = React.useState(1);
   const [img, setImg] = React.useState(0);
@@ -18,17 +19,17 @@ function Product({ product, onNavigate, onAdd, onOpen }) {
 
   return (
     <main dir="rtl" style={{ background: 'var(--surface-page)' }}>
-      <div style={{ background: 'var(--marble-000)', borderBottom: '1px solid var(--border-hairline)', padding: '16px 24px' }}>
+      <div style={{ background: 'var(--marble-000)', borderBottom: '1px solid var(--border-hairline)', padding: isMobile ? '12px 14px' : '16px 24px' }}>
         <div style={{ maxWidth: 1320, margin: '0 auto' }}>
           <Breadcrumb items={[['الرئيسية', 'home'], ['المنتجات', 'listing'], [p.title]]} onNavigate={onNavigate} />
         </div>
       </div>
 
-      <div style={{ maxWidth: 1320, margin: '0 auto', padding: '32px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'start' }}>
-        <div style={{ display: 'flex', gap: 14 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ maxWidth: 1320, margin: '0 auto', padding: isMobile ? '16px 12px' : '32px 24px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 24 : 48, alignItems: 'start' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column-reverse' : 'row', gap: isMobile ? 10 : 14 }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: 10 }}>
             {gallery.map((g, i) => (
-              <img key={i} src={g} onClick={() => setImg(i)} alt="" style={{ width: 74, height: 74, objectFit: 'cover', borderRadius: 'var(--radius-sm)', cursor: 'pointer', border: '2px solid ' + (img === i ? 'var(--gold-400)' : 'var(--border-hairline)') }} />
+              <img key={i} src={g} onClick={() => setImg(i)} alt="" style={{ width: isMobile ? 62 : 74, height: isMobile ? 62 : 74, objectFit: 'cover', borderRadius: 'var(--radius-sm)', cursor: 'pointer', border: '2px solid ' + (img === i ? 'var(--gold-400)' : 'var(--border-hairline)') }} />
             ))}
           </div>
           <div style={{ flex: 1, position: 'relative', background: 'var(--marble-000)', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
@@ -38,7 +39,7 @@ function Product({ product, onNavigate, onAdd, onOpen }) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <h1 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 30, fontWeight: 800, lineHeight: 1.4, textTransform: 'none', letterSpacing: 'normal' }}>{p.title}</h1>
+          <h1 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 22 : 30, fontWeight: 800, lineHeight: 1.4, textTransform: 'none', letterSpacing: 'normal' }}>{p.title}</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <Rating value={p.rating || 5} count={p.reviews} size={16} />
             <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: 13, color: 'var(--success)' }}>✓ متاح للشحن</span>
@@ -49,12 +50,12 @@ function Product({ product, onNavigate, onAdd, onOpen }) {
               🔥 باقي {p.stockLeft} قطع بس — 7 أشخاص بيشوفوا المنتج ده دلوقتي
             </div>
           )}
-          <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 16, lineHeight: 1.95, color: 'var(--text-muted)' }}>
+          <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 15 : 16, lineHeight: 1.95, color: 'var(--text-muted)' }}>
             قطعة مشغولة بعناية، مناسبة للتقديم اليومي وللمناسبات. تتغلف تغليف مزدوج ومؤمنة ضد الكسر أثناء الشحن.
           </p>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
             <QuantityStepper value={qty} onChange={setQty} />
-            <Button variant="primary" size="lg" style={{ flex: 1 }} onClick={() => onAdd(p, qty)}>أضف للسلة</Button>
+            <Button variant="primary" size="lg" style={{ flex: 1, minWidth: 150 }} onClick={() => onAdd(p, qty)}>أضف للسلة</Button>
           </div>
           <Button variant="outline" size="lg" fullWidth onClick={() => { onAdd(p, qty); onNavigate('checkout'); }}>اشتري دلوقتي</Button>
           <a href="https://wa.me/201007022631" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-sm)', padding: '13px', fontFamily: 'var(--font-sans-ar)', fontSize: 15, color: 'var(--text-body)', textDecoration: 'none' }}>
@@ -64,11 +65,11 @@ function Product({ product, onNavigate, onAdd, onOpen }) {
           {/* Cross-sell bundle */}
           <div style={{ border: '1px solid var(--gold-200)', background: 'var(--gold-50)', borderRadius: 'var(--radius-md)', padding: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
             <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: 16, fontWeight: 800, color: 'var(--gold-700)' }}>خدهم مع بعض ووفّر 12٪</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 7 : 10, flexWrap: 'wrap' }}>
               {[p, ...bundle].map((x, i) => (
                 <React.Fragment key={x.id}>
                   {i > 0 && <span style={{ color: 'var(--gold-600)', fontSize: 18 }}>+</span>}
-                  <img src={x.image} alt="" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 'var(--radius-sm)', border: '1px solid var(--gold-200)', background: '#fff' }} />
+                  <img src={x.image} alt="" style={{ width: isMobile ? 52 : 64, height: isMobile ? 52 : 64, objectFit: 'cover', borderRadius: 'var(--radius-sm)', border: '1px solid var(--gold-200)', background: '#fff' }} />
                 </React.Fragment>
               ))}
               <div style={{ marginInlineStart: 'auto', textAlign: 'left' }}>
@@ -89,9 +90,9 @@ function Product({ product, onNavigate, onAdd, onOpen }) {
         </div>
       </div>
 
-      <section style={{ maxWidth: 1320, margin: '0 auto', padding: '48px 24px 0' }}>
-        <h2 style={{ margin: '0 0 20px', fontFamily: 'var(--font-sans-ar)', fontSize: 24, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>ممكن يعجبك كمان</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>
+      <section style={{ maxWidth: 1320, margin: '0 auto', padding: isMobile ? '32px 12px 0' : '48px 24px 0' }}>
+        <h2 style={{ margin: '0 0 20px', fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 20 : 24, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>ممكن يعجبك كمان</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: isMobile ? 10 : 18 }}>
           {related.map(r => <ProductTile key={r.id} {...r} onAdd={() => onAdd(r)} onClick={() => onOpen(r)} />)}
         </div>
       </section>

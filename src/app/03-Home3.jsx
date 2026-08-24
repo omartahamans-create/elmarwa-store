@@ -74,9 +74,9 @@ const SCENES = {
 };
 
 /* Product cut-out standing on the generated stage, with contact shadow + reflection. */
-function StageShotV3({ image, sc, size = 320 }) {
+function StageShotV3({ image, sc, size = 320, compact }) {
   return (
-    <div style={{ position: 'relative', height: '100%', display: 'grid', placeItems: 'center', padding: '26px 18px' }}>
+    <div style={{ position: 'relative', height: '100%', display: 'grid', placeItems: 'center', padding: compact ? '16px 12px' : '26px 18px' }}>
       <div style={{ position: 'absolute', width: size * 1.15, height: size * 1.15, borderRadius: 999, background: sc.glow }} />
       <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <img src={image} alt="" style={{ position: 'relative', display: 'block', maxWidth: '100%', maxHeight: size, objectFit: 'contain', filter: 'drop-shadow(0 22px 22px ' + sc.shadow + ')' }} />
@@ -87,10 +87,11 @@ function StageShotV3({ image, sc, size = 320 }) {
 }
 
 function PayStripV2() {
+  const isMobile = window.__RESP__.useMobile();
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center', background: 'rgba(255,255,255,.82)', border: '1px solid var(--gold-200)', borderRadius: 'var(--radius-md)', padding: '10px 18px', boxShadow: 'var(--shadow-sm)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center', background: 'rgba(255,255,255,.82)', border: '1px solid var(--gold-200)', borderRadius: 'var(--radius-md)', padding: isMobile ? '8px 12px' : '10px 18px', boxShadow: 'var(--shadow-sm)', maxWidth: '100%' }}>
       <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: 13, fontWeight: 700, color: 'var(--ink-700)' }}>متاح التقسيط والدفع بالفيزا</span>
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: isMobile ? 6 : 10, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
         {PAY.map(p => (
           <span key={p} style={{ fontFamily: 'var(--font-sans)', fontSize: 10, fontWeight: 800, letterSpacing: '.04em', color: 'var(--ink-600)', border: '1px solid var(--border-hairline)', borderRadius: 6, padding: '4px 7px', background: '#fff', whiteSpace: 'nowrap' }}>{p}</span>
         ))}
@@ -101,6 +102,7 @@ function PayStripV2() {
 
 function HeroSliderV2({ onNavigate }) {
   const { Button, Countdown } = __deps_home_v2();
+  const isMobile = window.__RESP__.useMobile();
   const [i, setI] = React.useState(0);
   const [paused, setPaused] = React.useState(false);
   React.useEffect(() => {
@@ -110,15 +112,15 @@ function HeroSliderV2({ onNavigate }) {
   }, [paused]);
   const go = n => setI((n + BANNERS.length) % BANNERS.length);
   const arrow = {
-    position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: 42, height: 42,
+    position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: isMobile ? 34 : 42, height: isMobile ? 34 : 42,
     borderRadius: 999, border: '1px solid var(--gold-300)', background: 'rgba(255,255,255,.9)',
     cursor: 'pointer', display: 'grid', placeItems: 'center', fontSize: 20, color: 'var(--gold-700)', zIndex: 3
   };
   return (
     <section dir="rtl" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}
-      style={{ maxWidth: 1320, margin: '20px auto 0', padding: '0 24px' }}>
+      style={{ maxWidth: 1320, margin: isMobile ? '12px auto 0' : '20px auto 0', padding: isMobile ? '0 12px' : '0 24px' }}>
       <div style={{ position: 'relative', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--gold-200)', boxShadow: 'var(--shadow-md)' }}>
-        <div style={{ position: 'relative', minHeight: 420 }}>
+        <div style={{ position: 'relative', minHeight: isMobile ? 'auto' : 420 }}>
           {BANNERS.map((b, n) => {
             const sc = SCENES[b.scene];
             return (
@@ -126,33 +128,34 @@ function HeroSliderV2({ onNavigate }) {
               position: n === i ? 'relative' : 'absolute', inset: n === i ? 'auto' : 0,
               opacity: n === i ? 1 : 0, pointerEvents: n === i ? 'auto' : 'none',
               transition: 'opacity var(--dur-slow) var(--ease-out)', background: sc.bg,
-              display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'center', minHeight: 420
+              display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', alignItems: 'center',
+              minHeight: isMobile ? 'auto' : 420
             }}>
               <div style={{ position: 'absolute', insetInline: 0, bottom: 0, height: '34%', background: sc.floor, pointerEvents: 'none' }} />
-              <StageShotV3 image={b.image} sc={sc} size={330} />
-              <div style={{ position: 'relative', padding: '40px 48px 40px 24px', display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'flex-start' }}>
+              <StageShotV3 image={b.image} sc={sc} size={isMobile ? 190 : 330} compact={isMobile} />
+              <div style={{ position: 'relative', padding: isMobile ? '4px 18px 26px' : '40px 48px 40px 24px', display: 'flex', flexDirection: 'column', gap: isMobile ? 11 : 14, alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'start' }}>
                 <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: 13, fontWeight: 800, color: sc.chipText, background: sc.chipBg, border: '1px solid ' + sc.chipBorder, borderRadius: 'var(--radius-pill)', padding: '6px 14px' }}>{b.eyebrow}</span>
-                <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 44, lineHeight: 1.3, fontWeight: 900, color: sc.text, textTransform: 'none', letterSpacing: 'normal', maxWidth: 480 }}>{b.title}</h2>
+                <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 25 : 44, lineHeight: 1.3, fontWeight: 900, color: sc.text, textTransform: 'none', letterSpacing: 'normal', maxWidth: isMobile ? '100%' : 480 }}>{b.title}</h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', maxWidth: 420 }}>
                   <span style={{ height: 1, flex: 1, background: sc.rule }} />
-                  <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: 20, fontWeight: 800, color: sc.text }}>{b.sub}</span>
+                  <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 16 : 20, fontWeight: 800, color: sc.text, whiteSpace: 'nowrap' }}>{b.sub}</span>
                   <span style={{ height: 1, flex: 1, background: sc.rule }} />
                 </div>
                 {b.big && (
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4 }}>
-                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: 88, fontWeight: 900, lineHeight: 1, backgroundImage: GOLD_TEXT, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', fontVariantNumeric: 'tabular-nums', filter: 'drop-shadow(0 6px 10px rgba(140,100,32,.28))' }}>{b.big}</span>
-                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: 34, fontWeight: 900, backgroundImage: GOLD_TEXT, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', marginTop: 8 }}>{b.unit}</span>
+                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: isMobile ? 58 : 88, fontWeight: 900, lineHeight: 1, backgroundImage: GOLD_TEXT, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', fontVariantNumeric: 'tabular-nums', filter: 'drop-shadow(0 6px 10px rgba(140,100,32,.28))' }}>{b.big}</span>
+                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: isMobile ? 24 : 34, fontWeight: 900, backgroundImage: GOLD_TEXT, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', marginTop: 8 }}>{b.unit}</span>
                   </div>
                 )}
-                {b.note && <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 16, lineHeight: 1.9, color: sc.muted, maxWidth: 420 }}>{b.note}</p>}
+                {b.note && <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 14 : 16, lineHeight: 1.9, color: sc.muted, maxWidth: 420 }}>{b.note}</p>}
                 <Button variant="primary" size="lg" onClick={() => onNavigate(b.route, b.params || {})}>{b.cta}</Button>
                 <PayStripV2 />
               </div>
             </div>
           )})}
         </div>
-        <button onClick={() => go(i - 1)} style={{ ...arrow, insetInlineEnd: 16 }} aria-label="السابق">›</button>
-        <button onClick={() => go(i + 1)} style={{ ...arrow, insetInlineStart: 16 }} aria-label="التالي">‹</button>
+        <button onClick={() => go(i - 1)} style={{ ...arrow, insetInlineEnd: isMobile ? 8 : 16 }} aria-label="السابق">›</button>
+        <button onClick={() => go(i + 1)} style={{ ...arrow, insetInlineStart: isMobile ? 8 : 16 }} aria-label="التالي">‹</button>
         <div style={{ position: 'absolute', insetInline: 0, bottom: 16, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 3 }}>
           {BANNERS.map((_, n) => (
             <button key={n} onClick={() => setI(n)} aria-label={'بانر ' + (n + 1)} style={{
@@ -173,24 +176,25 @@ function HeroSliderV2({ onNavigate }) {
 /* Promo strip shown between product rows: product shot + marketing copy + gold marble background */
 function PromoStripV2({ eyebrow, title, note, big, unit, cta, image, onClick, flip, scene }) {
   const { Button } = __deps_home_v2();
+  const isMobile = window.__RESP__.useMobile();
   const sc = SCENES[scene || 'gold'];
   return (
-    <section dir="rtl" style={{ maxWidth: 1320, margin: '48px auto 0', padding: '0 24px' }}>
-      <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: flip ? '1fr 1.1fr' : '1.1fr 1fr', alignItems: 'center', background: sc.bg, border: '1px solid var(--gold-200)', borderRadius: 'var(--radius-md)', overflow: 'hidden', minHeight: 240, boxShadow: 'var(--shadow-sm)' }}>
+    <section dir="rtl" style={{ maxWidth: 1320, margin: isMobile ? '32px auto 0' : '48px auto 0', padding: isMobile ? '0 12px' : '0 24px' }}>
+      <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : (flip ? '1fr 1.1fr' : '1.1fr 1fr'), alignItems: 'center', background: sc.bg, border: '1px solid var(--gold-200)', borderRadius: 'var(--radius-md)', overflow: 'hidden', minHeight: isMobile ? 'auto' : 240, boxShadow: 'var(--shadow-sm)' }}>
         <div style={{ position: 'absolute', insetInline: 0, bottom: 0, height: '34%', background: sc.floor, pointerEvents: 'none' }} />
-        <div style={{ position: 'relative', order: flip ? 2 : 1, padding: '30px 40px', display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start' }}>
+        <div style={{ position: 'relative', order: isMobile ? 2 : (flip ? 2 : 1), padding: isMobile ? '4px 18px 24px' : '30px 40px', display: 'flex', flexDirection: 'column', gap: 12, alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'start' }}>
           <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: 12, fontWeight: 800, color: sc.chipText, background: sc.chipBg, border: '1px solid ' + sc.chipBorder, borderRadius: 'var(--radius-pill)', padding: '5px 12px' }}>{eyebrow}</span>
-          <h3 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 30, fontWeight: 900, lineHeight: 1.35, color: sc.text, textTransform: 'none', letterSpacing: 'normal', maxWidth: 460 }}>{title}</h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <h3 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 21 : 30, fontWeight: 900, lineHeight: 1.35, color: sc.text, textTransform: 'none', letterSpacing: 'normal', maxWidth: 460 }}>{title}</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
             {big && (
-              <span style={{ fontFamily: 'var(--font-sans)', fontSize: 54, fontWeight: 900, lineHeight: 1, backgroundImage: GOLD_TEXT, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', fontVariantNumeric: 'tabular-nums' }}>{big}<span style={{ fontSize: 24 }}>{unit}</span></span>
+              <span style={{ fontFamily: 'var(--font-sans)', fontSize: isMobile ? 42 : 54, fontWeight: 900, lineHeight: 1, backgroundImage: GOLD_TEXT, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', fontVariantNumeric: 'tabular-nums' }}>{big}<span style={{ fontSize: isMobile ? 20 : 24 }}>{unit}</span></span>
             )}
-            {note && <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 15, lineHeight: 1.9, color: sc.muted, maxWidth: 380 }}>{note}</p>}
+            {note && <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 14 : 15, lineHeight: 1.9, color: sc.muted, maxWidth: 380 }}>{note}</p>}
           </div>
           <Button variant="primary" onClick={onClick}>{cta}</Button>
         </div>
-        <div style={{ order: flip ? 1 : 2, position: 'relative', height: '100%', minHeight: 240 }}>
-          <StageShotV3 image={image} sc={sc} size={196} />
+        <div style={{ order: isMobile ? 1 : (flip ? 1 : 2), position: 'relative', height: '100%', minHeight: isMobile ? 'auto' : 240 }}>
+          <StageShotV3 image={image} sc={sc} size={isMobile ? 150 : 196} compact={isMobile} />
         </div>
       </div>
     </section>
@@ -200,20 +204,28 @@ function PromoStripV2({ eyebrow, title, note, big, unit, cta, image, onClick, fl
 /* One rotating row of 5 products. Items shift automatically every few seconds. */
 function AutoRowV2({ title, subtitle, pool, offset, tick, onAdd, onOpen, action }) {
   const { ProductTile } = __deps_home_v2();
+  const isMobile = window.__RESP__.useMobile();
   const step = (offset + tick * 2) % pool.length;
   const items = Array.from({ length: 5 }, (_, k) => pool[(step + k) % pool.length]);
+  const tiles = items.map((p, k) => <ProductTile key={p.id + '-' + k} {...p} onAdd={() => onAdd(p)} onClick={() => onOpen(p)} />);
   return (
-    <section dir="rtl" style={{ maxWidth: 1320, margin: '0 auto', padding: '48px 24px 0' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, marginBottom: 20 }}>
+    <section dir="rtl" style={{ maxWidth: 1320, margin: '0 auto', padding: isMobile ? '32px 0 0' : '48px 24px 0' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: isMobile ? 12 : 24, marginBottom: isMobile ? 14 : 20, padding: isMobile ? '0 12px' : 0 }}>
         <div>
-          <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 26, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal', color: 'var(--text-heading)' }}>{title}</h2>
-          {subtitle && <p style={{ margin: '6px 0 0', fontFamily: 'var(--font-sans-ar)', fontSize: 15, color: 'var(--text-muted)' }}>{subtitle}</p>}
+          <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 20 : 26, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal', color: 'var(--text-heading)' }}>{title}</h2>
+          {subtitle && <p style={{ margin: '6px 0 0', fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 13 : 15, color: 'var(--text-muted)' }}>{subtitle}</p>}
         </div>
-        {action && <button onClick={action} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans-ar)', fontSize: 15, color: 'var(--gold-700)' }}>شوف الكل ‹</button>}
+        {action && <button onClick={action} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 14 : 15, color: 'var(--gold-700)', whiteSpace: 'nowrap', flexShrink: 0 }}>شوف الكل ‹</button>}
       </div>
-      <div key={step} style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 18, animation: 'marwaFade var(--dur-slow) var(--ease-out)' }}>
-        {items.map((p, k) => <ProductTile key={p.id + '-' + k} {...p} onAdd={() => onAdd(p)} onClick={() => onOpen(p)} />)}
-      </div>
+      {isMobile ? (
+        <div key={step} className="mobile-scroll-row" style={{ display: 'flex', gap: 12, padding: '2px 12px 6px', animation: 'marwaFade var(--dur-slow) var(--ease-out)' }}>
+          {tiles.map((tile, k) => <div key={k} style={{ flex: '0 0 62%', maxWidth: 230 }}>{tile}</div>)}
+        </div>
+      ) : (
+        <div key={step} style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 18, animation: 'marwaFade var(--dur-slow) var(--ease-out)' }}>
+          {tiles}
+        </div>
+      )}
     </section>
   );
 }
@@ -241,6 +253,7 @@ const STRIPS = [
 
 function HomeV2({ onNavigate, onAdd, onOpen }) {
   const { Button, CategoryTile, TrustRow, CATEGORIES, PRODUCTS } = __deps_home_v2();
+  const isMobile = window.__RESP__.useMobile();
   const [tick, setTick] = React.useState(0);
   React.useEffect(() => {
     const t = setInterval(() => setTick(v => v + 1), 7000);
@@ -272,25 +285,25 @@ function HomeV2({ onNavigate, onAdd, onOpen }) {
       <style>{'@keyframes marwaFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}'}</style>
       <HeroSliderV2 onNavigate={onNavigate} />
 
-      <div style={{ background: 'var(--marble-000)', borderBlock: '1px solid var(--border-hairline)', padding: '22px 24px', marginTop: 40 }}>
+      <div style={{ background: 'var(--marble-000)', borderBlock: '1px solid var(--border-hairline)', padding: isMobile ? '16px 12px' : '22px 24px', marginTop: isMobile ? 28 : 40, overflowX: isMobile ? 'auto' : 'visible' }}>
         <div style={{ maxWidth: 1320, margin: '0 auto' }}><TrustRow /></div>
       </div>
 
-      <section dir="rtl" style={{ maxWidth: 1320, margin: '0 auto', padding: '48px 24px 0' }}>
-        <h2 style={{ margin: '0 0 24px', fontFamily: 'var(--font-sans-ar)', fontSize: 26, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>تسوق حسب القسم</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 18 }}>
+      <section dir="rtl" style={{ maxWidth: 1320, margin: '0 auto', padding: isMobile ? '32px 12px 0' : '48px 24px 0' }}>
+        <h2 style={{ margin: isMobile ? '0 0 14px' : '0 0 24px', fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 20 : 26, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>تسوق حسب القسم</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(5,1fr)', gap: isMobile ? 12 : 18 }}>
           {CATEGORIES.map(c => <CategoryTile key={c.id} {...c} onClick={() => onNavigate('listing', { cat: c.id })} />)}
         </div>
       </section>
 
       {blocks}
 
-      <section dir="rtl" style={{ maxWidth: 1320, margin: '64px auto 0', padding: '0 24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, alignItems: 'center', background: 'var(--marble-000)', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
-          <img src="/assets/storefront-night.jpg" alt="معرض المروة" style={{ width: '100%', height: 360, objectFit: 'cover' }} />
-          <div style={{ padding: '32px 32px 32px 0', display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'flex-start' }}>
-            <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 28, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>معرض حقيقي، مش صفحة بس</h2>
-            <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 16, lineHeight: 1.9, color: 'var(--text-muted)' }}>معرضنا في جراح — أجا — الدقهلية مفتوح يومياً. تقدر تشوف المنتج بنفسك قبل ما تشتري، أو تطلب أونلاين ونوصلّك.</p>
+      <section dir="rtl" style={{ maxWidth: 1320, margin: isMobile ? '40px auto 0' : '64px auto 0', padding: isMobile ? '0 12px' : '0 24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 0 : 32, alignItems: 'center', background: 'var(--marble-000)', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+          <img src="/assets/storefront-night.jpg" alt="معرض المروة" style={{ width: '100%', height: isMobile ? 220 : 360, objectFit: 'cover' }} />
+          <div style={{ padding: isMobile ? '22px 18px 26px' : '32px 32px 32px 0', display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'flex-start' }}>
+            <h2 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 21 : 28, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>معرض حقيقي، مش صفحة بس</h2>
+            <p style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 15 : 16, lineHeight: 1.9, color: 'var(--text-muted)' }}>معرضنا في جراح — أجا — الدقهلية مفتوح يومياً. تقدر تشوف المنتج بنفسك قبل ما تشتري، أو تطلب أونلاين ونوصلّك.</p>
             <Button variant="outline" onClick={() => onNavigate('about')}>اعرف أكتر عننا</Button>
           </div>
         </div>

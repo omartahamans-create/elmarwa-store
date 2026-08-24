@@ -29,68 +29,121 @@ function Check({ label, count }) {
 
 function Listing({ params = {}, onNavigate, onAdd, onOpen, title, items, flash }) {
   const { Button, Tag, Icon, ProductTile, Breadcrumb, Countdown, CATEGORIES, PRODUCTS } = __deps_ui_kits_store_Listing_jsx();
+  const isMobile = window.__RESP__.useMobile();
+  const isNarrow = window.__RESP__.useNarrow();
   const cat = CATEGORIES.find(c => c.id === params.cat);
   const list = items || (cat ? PRODUCTS.filter(p => p.cat === cat.id) : PRODUCTS);
   const heading = title || (cat ? cat.title : 'كل المنتجات');
   const [sort, setSort] = React.useState('الأحدث');
+  const [filtersOpen, setFiltersOpen] = React.useState(false);
+  window.__RESP__.useLockScroll(isNarrow && filtersOpen);
+  React.useEffect(() => { setFiltersOpen(false); }, [params.cat, params.sub, title]);
+
+  const filterBody = (
+    <React.Fragment>
+      <FilterGroup title="القسم">
+        {(cat ? cat.children : CATEGORIES.map(c => c.title)).slice(0, 7).map(s => <Check key={s} label={s} count={Math.floor(Math.random() * 24) + 4} />)}
+      </FilterGroup>
+      <FilterGroup title="السعر">
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input placeholder="من" style={{ width: '50%', padding: '9px 10px', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font-sans-ar)', fontSize: 14 }} />
+          <input placeholder="إلى" style={{ width: '50%', padding: '9px 10px', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font-sans-ar)', fontSize: 14 }} />
+        </div>
+      </FilterGroup>
+      <FilterGroup title="الخامة">
+        {['كريستال', 'بورسلين', 'زجاج', 'ستانلس ستيل', 'سيراميك'].map(s => <Check key={s} label={s} />)}
+      </FilterGroup>
+      <FilterGroup title="العروض">
+        <Check label="عليه خصم" /><Check label="وصل حديثاً" /><Check label="متاح للشحن السريع" />
+      </FilterGroup>
+    </React.Fragment>
+  );
+
   return (
     <main dir="rtl" style={{ background: 'var(--surface-page)', paddingBottom: 40 }}>
       {flash ? (
-        <div style={{ background: 'var(--gold-50)', borderBottom: '1px solid var(--gold-200)', padding: '36px 24px' }}>
+        <div style={{ background: 'var(--gold-50)', borderBottom: '1px solid var(--gold-200)', padding: isMobile ? '22px 14px' : '36px 24px' }}>
           <div style={{ maxWidth: 1320, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
             <div>
-              <h1 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 34, fontWeight: 900, color: 'var(--ink-800)', textTransform: 'none', letterSpacing: 'normal' }}>العروض والخصومات</h1>
-              <p style={{ margin: '8px 0 0', fontFamily: 'var(--font-sans-ar)', fontSize: 16, color: 'var(--ink-600)' }}>خصومات لحد 35٪ — الكميات محدودة</p>
+              <h1 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 24 : 34, fontWeight: 900, color: 'var(--ink-800)', textTransform: 'none', letterSpacing: 'normal' }}>العروض والخصومات</h1>
+              <p style={{ margin: '8px 0 0', fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 14 : 16, color: 'var(--ink-600)' }}>خصومات لحد 35٪ — الكميات محدودة</p>
             </div>
             <Countdown seconds={9 * 3600 + 42 * 60} label="العرض ينتهي خلال" />
           </div>
         </div>
       ) : (
-        <div style={{ background: 'var(--marble-000)', borderBottom: '1px solid var(--border-hairline)', padding: '16px 24px' }}>
+        <div style={{ background: 'var(--marble-000)', borderBottom: '1px solid var(--border-hairline)', padding: isMobile ? '12px 14px' : '16px 24px' }}>
           <div style={{ maxWidth: 1320, margin: '0 auto' }}>
             <Breadcrumb items={[['الرئيسية', 'home'], ...(cat ? [[cat.title]] : [['كل المنتجات']])]} onNavigate={onNavigate} />
           </div>
         </div>
       )}
 
-      <div style={{ maxWidth: 1320, margin: '0 auto', padding: '28px 24px', display: 'grid', gridTemplateColumns: '250px 1fr', gap: 32, alignItems: 'start' }}>
-        <aside style={{ background: 'var(--marble-000)', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-md)', padding: 20, position: 'sticky', top: 200 }}>
-          <FilterGroup title="القسم">
-            {(cat ? cat.children : CATEGORIES.map(c => c.title)).slice(0, 7).map(s => <Check key={s} label={s} count={Math.floor(Math.random() * 24) + 4} />)}
-          </FilterGroup>
-          <FilterGroup title="السعر">
-            <div style={{ display: 'flex', gap: 8 }}>
-              <input placeholder="من" style={{ width: '50%', padding: '9px 10px', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font-sans-ar)', fontSize: 14 }} />
-              <input placeholder="إلى" style={{ width: '50%', padding: '9px 10px', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font-sans-ar)', fontSize: 14 }} />
-            </div>
-          </FilterGroup>
-          <FilterGroup title="الخامة">
-            {['كريستال', 'بورسلين', 'زجاج', 'ستانلس ستيل', 'سيراميك'].map(s => <Check key={s} label={s} />)}
-          </FilterGroup>
-          <FilterGroup title="العروض">
-            <Check label="عليه خصم" /><Check label="وصل حديثاً" /><Check label="متاح للشحن السريع" />
-          </FilterGroup>
-          <Button variant="outline" fullWidth>طبّق الفلاتر</Button>
-        </aside>
+      <div style={{ maxWidth: 1320, margin: '0 auto', padding: isMobile ? '16px 12px' : '28px 24px', display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : '250px 1fr', gap: isNarrow ? 0 : 32, alignItems: 'start' }}>
+        {!isNarrow && (
+          <aside style={{ background: 'var(--marble-000)', border: '1px solid var(--border-hairline)', borderRadius: 'var(--radius-md)', padding: 20, position: 'sticky', top: 200 }}>
+            {filterBody}
+            <Button variant="outline" fullWidth>طبّق الفلاتر</Button>
+          </aside>
+        )}
 
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 20, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: isMobile ? 10 : 16, marginBottom: isMobile ? 14 : 20, flexWrap: 'wrap' }}>
             <div>
-              <h1 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 26, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>{heading}</h1>
+              <h1 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: isMobile ? 21 : 26, fontWeight: 800, textTransform: 'none', letterSpacing: 'normal' }}>{heading}</h1>
               <span style={{ fontFamily: 'var(--font-sans-ar)', fontSize: 14, color: 'var(--text-muted)' }}>{list.length} منتج</span>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            {isNarrow && (
+              <button onClick={() => setFiltersOpen(true)} style={{
+                display: 'flex', alignItems: 'center', gap: 8, background: 'var(--marble-000)',
+                border: '1px solid var(--gold-300)', borderRadius: 'var(--radius-sm)', cursor: 'pointer',
+                padding: '10px 14px', fontFamily: 'var(--font-sans-ar)', fontSize: 14, fontWeight: 700, color: 'var(--gold-800)'
+              }}>
+                <Icon name="sliders-horizontal" size={16} color="var(--gold-600)" /> فلترة وترتيب
+              </button>
+            )}
+          </div>
+
+          {!isNarrow && (
+            <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
               {['الأحدث', 'الأقل سعراً', 'الأعلى سعراً', 'الأكثر مبيعاً'].map(s => <Tag key={s} active={sort === s} onClick={() => setSort(s)}>{s}</Tag>)}
             </div>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }}>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : (isNarrow ? 'repeat(3,1fr)' : 'repeat(4,1fr)'), gap: isMobile ? 10 : 18 }}>
             {list.map(p => <ProductTile key={p.id} {...p} onAdd={() => onAdd(p)} onClick={() => onOpen(p)} />)}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 32 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: isMobile ? 24 : 32 }}>
             {[1, 2, 3].map(n => <Tag key={n} active={n === 1}>{n}</Tag>)}
           </div>
         </div>
       </div>
+
+      {isNarrow && filtersOpen && (
+        <div onClick={() => setFiltersOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 92, background: 'rgba(58,38,7,.34)' }}>
+          <aside dir="rtl" onClick={e => e.stopPropagation()} style={{
+            position: 'absolute', insetInline: 0, bottom: 0, maxHeight: '86vh',
+            background: 'var(--marble-000)', borderTopLeftRadius: 16, borderTopRightRadius: 16,
+            display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-lg)'
+          }}>
+            <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-hairline)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontFamily: 'var(--font-sans-ar)', fontSize: 17, textTransform: 'none', letterSpacing: 'normal' }}>فلترة وترتيب</h3>
+              <button onClick={() => setFiltersOpen(false)} aria-label="إغلاق" style={{ background: 'none', border: 'none', fontSize: 28, lineHeight: 1, cursor: 'pointer', color: 'var(--text-muted)', padding: '0 6px' }}>×</button>
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto', padding: 18 }}>
+              <FilterGroup title="الترتيب">
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {['الأحدث', 'الأقل سعراً', 'الأعلى سعراً', 'الأكثر مبيعاً'].map(s => <Tag key={s} active={sort === s} onClick={() => setSort(s)}>{s}</Tag>)}
+                </div>
+              </FilterGroup>
+              {filterBody}
+            </div>
+            <div style={{ padding: 16, borderTop: '1px solid var(--border-hairline)' }}>
+              <Button variant="primary" size="lg" fullWidth onClick={() => setFiltersOpen(false)}>عرض {list.length} منتج</Button>
+            </div>
+          </aside>
+        </div>
+      )}
     </main>
   );
 }
